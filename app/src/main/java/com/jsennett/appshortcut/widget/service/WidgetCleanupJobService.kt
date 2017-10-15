@@ -7,9 +7,12 @@ import android.app.job.JobService
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.pm.PackageManager
+import com.jsennett.appshortcut.data.WidgetPackageModel
 import com.jsennett.appshortcut.data.WidgetPackageService
 import com.jsennett.appshortcut.util.BitmapUtil
 import com.jsennett.appshortcut.widget.ShortcutWidgetProvider
+import com.jsennett.appshortcut.widget.ShortcutWidgetUpdater
 import io.reactivex.Completable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -33,8 +36,46 @@ class WidgetCleanupJobService : JobService() {
         disposable = Completable.create {
             val context = this@WidgetCleanupJobService
             val service = WidgetPackageService(context)
-            val bitmapPackages = BitmapUtil.getBitmapPackages(context)
 
+            val widgetManager = AppWidgetManager.getInstance(context)
+            val widgetIds = widgetManager.getAppWidgetIds(ComponentName(context, ShortcutWidgetProvider::class.java))
+            val updatedIcons = mutableSetOf<String>()
+            val updater = ShortcutWidgetUpdater(context, service, widgetManager)
+            for (widgetId in widgetIds) {
+                if (it.isDisposed) {
+                    return@create
+                }
+
+                // Update icon and label info for widgets
+                val widgetInfo = service.findById(widgetId.toString())
+                if (widgetInfo != null) {
+                    try {
+                        var updatedModel = widgetInfo
+                        val appInfo = context.packageManager.getApplicationInfo(widgetInfo.packageName, PackageManager.GET_META_DATA)
+                        val label = appInfo.loadLabel(context.packageManager)
+                        if (label != widgetInfo.appName) {
+                            updatedModel = WidgetPackageModel(widgetInfo.widgetId, widgetInfo.packageName, label.toString())
+                            service.upsert(updatedModel)
+                        }
+
+                        if (!updatedIcons.contains(widgetInfo.packageName)) {
+                            updatedIcons.add(widgetInfo.packageName)
+                            BitmapUtil.savePackageIconToFile(context, BitmapUtil.fromDrawable(appInfo.loadIcon(context.packageManager)), widgetInfo.packageName)
+                        }
+
+                        updater.updateWidget(widgetId, updatedModel)
+                    } catch (e: Throwable) {}
+                }
+            }
+
+
+
+            if (it.isDisposed) {
+                return@create
+            }
+
+            // Cleanup abandoned icon bitmaps
+            val bitmapPackages = BitmapUtil.getBitmapPackages(context)
             for (packageName in bitmapPackages) {
                 if (it.isDisposed) {
                     return@create
