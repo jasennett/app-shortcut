@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">App Shortcut</string>
+    <string name="not_installed">Not currently installed</string>
+</resources>

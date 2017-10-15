@@ -1,0 +1,48 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+def lib = rootProject.ext.libraries
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
+    defaultConfig {
+        applicationId "com.jsennett.appshortcut"
+        minSdkVersion 21
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+    compile "android.arch.persistence.room:runtime:${lib.archcomponents}"
+    kapt "android.arch.persistence.room:compiler:${lib.archcomponents}"
+
+    compile "com.android.support:appcompat-v7:${lib.support}"
+    compile "com.android.support:recyclerview-v7:${lib.support}"
+
+    compile "io.reactivex.rxjava2:rxjava:${lib.rxjava}"
+    compile "io.reactivex.rxjava2:rxkotlin:${lib.rxkotlin}"
+    compile "io.reactivex.rxjava2:rxandroid:${lib.rxandroid}"
+
+    testCompile 'junit:junit:4.12'
+}
+repositories {
+    mavenCentral()
+}
