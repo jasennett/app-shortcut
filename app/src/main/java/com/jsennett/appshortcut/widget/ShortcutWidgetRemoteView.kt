@@ -24,8 +24,4 @@ class ShortcutWidgetRemoteView(context: Context) {
     fun setImage(bitmap: Bitmap) {
         remoteView.setImageViewBitmap(R.id.shortcut_icon, bitmap)
     }
-
-    fun setStatusImage(resourceId: Int) {
-        remoteView.setImageViewResource(R.id.status_icon, resourceId)
-    }
 }

@@ -28,17 +28,9 @@ class ShortcutWidgetUpdater(private val context: Context, service: WidgetPackage
             } else {
                 remoteView.setImage(bitmap)
             }
-
-            val appInstalled = context.packageManager.getLaunchIntentForPackage(widgetPackageInfo.packageName) != null
-            if (appInstalled) {
-                remoteView.setStatusImage(R.drawable.ic_star_accent_24dp)
-            } else {
-                remoteView.setStatusImage(R.drawable.ic_missing_accent_24dp)
-            }
         } else {
             remoteView.setImage(R.drawable.placeholder_icon)
             remoteView.setLabel(context.getString(R.string.app_name))
-            remoteView.setStatusImage(R.drawable.ic_missing_accent_24dp)
         }
 
         widgetManager.updateAppWidget(widgetId, remoteView.remoteView)
