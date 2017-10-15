@@ -9,6 +9,8 @@ import com.jsennett.appshortcut.widget.service.WidgetCleanupJobService
 class ShortcutWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         WidgetCleanupJobService.scheduleIfNeeded(context)
+        val updater = ShortcutWidgetUpdater(context, null, appWidgetManager)
+        appWidgetIds.forEach { updater.updateWidget(it) }
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
