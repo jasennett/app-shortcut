@@ -8,4 +8,6 @@
     <color name="teal_500">#009688</color>
     <color name="teal_700">#00796B</color>
     <color name="red_accent_200">#FF5252</color>
+    <color name="grey_200">#EEEEEE</color>
+    <color name="grey_300">#E0E0E0</color>
 </resources>

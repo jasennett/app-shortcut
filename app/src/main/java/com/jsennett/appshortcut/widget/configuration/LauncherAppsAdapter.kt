@@ -48,6 +48,7 @@ class LauncherAppsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     }
                 }
 
+                holder.image.setImageDrawable(holder.itemView.context.getDrawable(R.drawable.placeholder_icon))
                 holder.imageLoadDisposable = Single.fromCallable {
                     appItem.resolveInfo.loadIcon(holder.itemView.context.packageManager)
                 }

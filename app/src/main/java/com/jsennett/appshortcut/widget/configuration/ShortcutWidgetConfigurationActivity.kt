@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView
 import com.jsennett.appshortcut.R
 import com.jsennett.appshortcut.data.WidgetPackageModel
 import com.jsennett.appshortcut.data.WidgetPackageService
+import com.jsennett.appshortcut.util.BitmapConverter
 import com.jsennett.appshortcut.widget.ShortcutWidgetUpdater
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -40,8 +41,11 @@ class ShortcutWidgetConfigurationActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         adapter.addListener(object : ResolveInfoClickListener {
             override fun itemClicked(appItem: AppItem) {
-                val model = WidgetPackageModel(widgetId.toString(), appItem.resolveInfo.activityInfo.packageName, appItem.label.toString())
+                val packageName = appItem.resolveInfo.activityInfo.packageName
+                val model = WidgetPackageModel(widgetId.toString(), packageName, appItem.label.toString())
                 widgetService.upsert(model)
+                val bitmap = BitmapConverter.fromDrawable(appItem.resolveInfo.loadIcon(packageManager))
+                BitmapConverter.savePackageIconToFile(this@ShortcutWidgetConfigurationActivity, bitmap, packageName)
                 widgetUpdater.updateWidget(widgetId)
                 setActivityResult(Activity.RESULT_OK)
                 finish()

@@ -6,10 +6,8 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import com.jsennett.appshortcut.R
-import com.jsennett.appshortcut.data.WidgetPackageService
 
 class ShortcutLauncherIntentService : IntentService("ShortcutLauncherIntentService") {
-    private val service: WidgetPackageService by lazy { WidgetPackageService(this) }
     private lateinit var handler: Handler
 
     override fun onCreate() {
@@ -22,16 +20,13 @@ class ShortcutLauncherIntentService : IntentService("ShortcutLauncherIntentServi
             return
         }
 
-        val widgetId = intent.data.path.trim('/')
-        val widget = service.findById(widgetId)
-        if (widget != null) {
-            val launchIntent = packageManager.getLaunchIntentForPackage(widget.packageName)
-            if (launchIntent != null) {
-                startActivity(launchIntent)
-            } else {
-                handler.post {
-                    Toast.makeText(this, getString(R.string.not_installed), Toast.LENGTH_SHORT).show()
-                }
+        val packageName = intent.data.path.trim('/')
+        val launchIntent = packageManager.getLaunchIntentForPackage(packageName)
+        if (launchIntent != null) {
+            startActivity(launchIntent)
+        } else {
+            handler.post {
+                Toast.makeText(this, getString(R.string.not_installed), Toast.LENGTH_SHORT).show()
             }
         }
     }

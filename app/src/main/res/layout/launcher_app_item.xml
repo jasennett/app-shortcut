@@ -13,7 +13,8 @@
         android:id="@+id/app_icon"
         android:layout_width="@dimen/icon_size"
         android:layout_height="@dimen/icon_size"
-        android:layout_marginEnd="@dimen/content_spacing"/>
+        android:layout_marginEnd="@dimen/content_spacing"
+        android:src="@drawable/placeholder_icon"/>
 
     <TextView
         android:id="@+id/app_label"

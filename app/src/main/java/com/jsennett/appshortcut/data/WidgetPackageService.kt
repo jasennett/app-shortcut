@@ -23,7 +23,7 @@ class WidgetPackageService(context: Context) {
     }
 
     fun delete(id: String) {
-        widgetPackages.delete(WidgetPackageEntity(id, "", null))
+        widgetPackages.delete(WidgetPackageEntity(id, "", ""))
     }
 
     private fun map(entity: WidgetPackageEntity): WidgetPackageModel {

@@ -9,4 +9,4 @@ import android.arch.persistence.room.PrimaryKey
 data class WidgetPackageEntity(
         @ColumnInfo(name = "id") @PrimaryKey val widgetId: String,
         @ColumnInfo val packageName: String,
-        @ColumnInfo val appName: String?)
+        @ColumnInfo val appName: String)
