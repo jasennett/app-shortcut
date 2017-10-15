@@ -1,4 +1,4 @@
-package com.jsennett.appshortcut.widget
+package com.jsennett.appshortcut.widget.service
 
 import android.app.IntentService
 import android.content.Intent

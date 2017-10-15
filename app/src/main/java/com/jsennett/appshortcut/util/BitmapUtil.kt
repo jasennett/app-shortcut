@@ -9,7 +9,7 @@ import android.graphics.drawable.BitmapDrawable
 import java.io.File
 import java.io.FileOutputStream
 
-object BitmapConverter {
+object BitmapUtil {
     private const val FILE_SUFFIX = "_icon.png"
 
     fun fromDrawable(drawable: Drawable): Bitmap {
@@ -50,6 +50,11 @@ object BitmapConverter {
         val options = BitmapFactory.Options()
         options.inPreferredConfig = Bitmap.Config.ARGB_8888
         return BitmapFactory.decodeFile(file.absolutePath, options)
+    }
+
+    fun getBitmapPackages(context: Context): List<String> {
+        val directory = File(context.getExternalFilesDir(null).absolutePath)
+        return directory.listFiles().map { it.name.removeSuffix(FILE_SUFFIX) }
     }
 
     fun deletePackageBitmap(context: Context, packageName: String) {

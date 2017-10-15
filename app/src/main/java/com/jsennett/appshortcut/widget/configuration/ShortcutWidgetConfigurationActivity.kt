@@ -1,7 +1,11 @@
 package com.jsennett.appshortcut.widget.configuration
 
 import android.app.Activity
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
 import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.support.v7.app.AppCompatActivity
@@ -12,8 +16,9 @@ import android.support.v7.widget.RecyclerView
 import com.jsennett.appshortcut.R
 import com.jsennett.appshortcut.data.WidgetPackageModel
 import com.jsennett.appshortcut.data.WidgetPackageService
-import com.jsennett.appshortcut.util.BitmapConverter
+import com.jsennett.appshortcut.util.BitmapUtil
 import com.jsennett.appshortcut.widget.ShortcutWidgetUpdater
+import com.jsennett.appshortcut.widget.service.WidgetCleanupJobService
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -42,11 +47,21 @@ class ShortcutWidgetConfigurationActivity : AppCompatActivity() {
         adapter.addListener(object : ResolveInfoClickListener {
             override fun itemClicked(appItem: AppItem) {
                 val packageName = appItem.resolveInfo.activityInfo.packageName
+
+                // Save local record
                 val model = WidgetPackageModel(widgetId.toString(), packageName, appItem.label.toString())
                 widgetService.upsert(model)
-                val bitmap = BitmapConverter.fromDrawable(appItem.resolveInfo.loadIcon(packageManager))
-                BitmapConverter.savePackageIconToFile(this@ShortcutWidgetConfigurationActivity, bitmap, packageName)
-                widgetUpdater.updateWidget(widgetId)
+
+                // Save the bitmap for the icon
+                val bitmap = BitmapUtil.fromDrawable(appItem.resolveInfo.loadIcon(packageManager))
+                BitmapUtil.savePackageIconToFile(this@ShortcutWidgetConfigurationActivity, bitmap, packageName)
+
+                // Update widget view
+                widgetUpdater.updateWidget(widgetId, model)
+
+                // Schedule cleanup job if it is not already scheduled
+                WidgetCleanupJobService.scheduleIfNeeded(this@ShortcutWidgetConfigurationActivity)
+
                 setActivityResult(Activity.RESULT_OK)
                 finish()
             }
