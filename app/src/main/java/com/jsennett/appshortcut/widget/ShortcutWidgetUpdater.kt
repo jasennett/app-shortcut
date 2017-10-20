@@ -9,7 +9,6 @@ import com.jsennett.appshortcut.R
 import com.jsennett.appshortcut.data.WidgetPackageModel
 import com.jsennett.appshortcut.data.WidgetPackageService
 import com.jsennett.appshortcut.util.BitmapUtil
-import com.jsennett.appshortcut.widget.service.ShortcutLauncherIntentService
 
 class ShortcutWidgetUpdater(private val context: Context, service: WidgetPackageService? = null, appWidgetManager: AppWidgetManager? = null) {
     private val widgetManager = appWidgetManager ?: AppWidgetManager.getInstance(context)
@@ -19,9 +18,9 @@ class ShortcutWidgetUpdater(private val context: Context, service: WidgetPackage
         val remoteView = ShortcutWidgetRemoteView(context)
         val widgetPackageInfo = widgetModel ?: widgetService.findById(widgetId.toString())
         if (widgetPackageInfo != null) {
-            val intent = Intent(context, ShortcutLauncherIntentService::class.java)
+            val intent = Intent(context, ShortcutLauncherActivity::class.java)
             intent.data = Uri.parse("content://appshortcut/${widgetPackageInfo.packageName}")
-            val pendingIntent = PendingIntent.getService(context, 0, intent, 0)
+            val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
             remoteView.setClickIntent(pendingIntent)
             remoteView.setLabel(widgetPackageInfo.appName)
             val bitmap = BitmapUtil.loadPackageBitmap(context, widgetPackageInfo.packageName)
